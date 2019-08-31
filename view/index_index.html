@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= title%></title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://cdn.bootcss.com/material-design-lite/1.3.0/material.min.css">
+  <script src="https://cdn.bootcss.com/material-design-lite/1.3.0/material.min.js"></script>
+  <style>
+    .mdl-grid {
+      max-width: 500px;
+    }
+    .mdl-card {
+      min-height: 0;
+    }
+    .mdl-card__supporting-text .mdl-textfield {
+      width: 100px;
+    }
+    .mdl-card__supporting-text table {
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body class="mdl-color--grey-200">
+  <div class="mdl-grid">
+    <% if(wx) { %><div class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-color--green">
+      <div class="mdl-card__supporting-text mdl-color-text--white">
+        建议点击右上角 <code>更多</code> → <code>在聊天中置顶</code> 或 <code>收藏</code>，以方便地找到本页。
+      </div>
+    </div><% } %>
+    <div class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-color--yellow">
+      <div class="mdl-card__supporting-text">
+        现有 <code><%= data.length %></code> 个项目：<% data.forEach((c, i) => { %><code><%= i == 0 ? '' : '、' %><%= c.name %></code><% }); %>。你可能需要滚动页面才能看到更多项目。另外，<b>接龙时请不要重复提交</b>。如果很不幸你还是重复提交了，或者说反悔了，<b>可以通过序号来删除提交记录</b>。
+      </div>
+    </div>
+    <% for(var i = 0; i < data.length; i++) { %><div class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col">
+      <div class="mdl-card__title"><% if(data[i].hasOwnProperty('finished')) { %>[接龙]<% } else { %>[公告]<% } %><%= data[i].name %></div>
+      <div class="mdl-card__supporting-text">
+        <p><%- data[i].description %></p><% if(data[i].hasOwnProperty('finished')) { %><% if(wx) { %><form method="POST">
+          <input type="hidden" name="id" value="<%= i %>">
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" name="add" required>
+            <label class="mdl-textfield__label">要提交的姓名</label>
+          </div>
+          <input class="mdl-button mdl-button--colored mdl-js-button" type="submit">
+        </form>
+        <form method="POST">
+          <input type="hidden" name="id" value="<%= i %>">
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" name="del" required>
+            <label class="mdl-textfield__label">要删除的序号</label>
+          </div>
+          <input class="mdl-button mdl-button--colored mdl-js-button" type="submit">
+        </form><% } %>
+        <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+          <thead>
+            <tr>
+              <th>序号</th>
+              <th class="mdl-data-table__cell--non-numeric">姓名</th>
+              <th class="mdl-data-table__cell--non-numeric">提交时间</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% data[i].finished.forEach((c, i) => { %><tr>
+              <td><%= i + 1 %></td>
+              <td class="mdl-data-table__cell--non-numeric"><%= c.name %></td>
+              <td class="mdl-data-table__cell--non-numeric"><%= c.time %></td>
+            </tr><% }); %>
+          </tbody>
+        </table><% } %>
+      </div>
+    </div><% } %>
+    <div class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col">
+      <div class="mdl-card__supporting-text">
+        由 <a href="https://www.thinkjs.org/" target="_blank" rel="noopener">ThinkJS</a> 强力驱动。
+      </div>
+    </div>
+  </div>
+  <script>
+    var forms = document.getElementsByTagName('form');
+    for (var i in forms) {
+      if (forms.hasOwnProperty(i)) {
+        var element = forms[i];
+        element.reset();
+      }
+    }
+  </script>
+</body>
+
+</html>
